@@ -1,0 +1,72 @@
+{% extends "layout.html" %} {% block content %}
+<div
+  class="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-900 via-blue-800 to-blue-950 py-12 px-4 sm:px-6 lg:px-8"
+>
+  <div
+    class="max-w-md w-full space-y-8 bg-blue-900/30 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-blue-700/30"
+  >
+    <div>
+      <h1 class="text-4xl font-bold text-center mb-2 text-white">
+        ثبت‌نام در لحظه ساز
+      </h1>
+      <p class="text-blue-200 text-center mb-8">
+        برای ایجاد حساب کاربری، فرم زیر را تکمیل کنید.
+      </p>
+    </div>
+
+    {% if form.errors %}
+    <div
+      class="bg-red-500/20 border border-red-400 text-red-100 px-4 py-3 rounded-lg mb-4"
+    >
+      {% for field, errors in form.errors.items %} {% for error in errors %}
+      <p>{{ error }}</p>
+      {% endfor %} {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-8 space-y-6">
+      {% csrf_token %}
+
+      <div class="space-y-4">
+        <div>
+        <div>
+          {% for field in form%}
+          <label
+            for="{{ field.id_for_label }}"
+            class="block mb-2 font-medium text-blue-100"
+            >{{ field.label }}</label
+          >
+          <input
+            type="{{ field.field.widget.input_type }}"
+            name="{{ field.html_name }}"
+            id="{{ field.id_for_label }}"
+            class="w-full bg-blue-800/30 border border-blue-600 rounded-lg px-4 py-3 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"
+          />
+          {% if field.errors %}
+          <p class="text-red-400 text-sm mt-1">{{ field.errors.0 }}</p>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-gradient-to-r from-blue-400 to-blue-500 text-white font-bold py-3 px-4 rounded-lg hover:from-blue-500 hover:to-blue-600 transform hover:scale-[1.02] transition-all duration-200 shadow-lg"
+      >
+        ثبت‌نام
+      </button>
+    </form>
+
+    <div class="mt-6 text-center text-blue-200">
+      <p>
+        قبلاً ثبت‌نام کرده‌اید؟
+        <a
+          href="{% url 'accounts:login' %}"
+          class="text-blue-300 hover:text-blue-200 font-medium"
+          >وارد شوید</a
+        >
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block title %}ثبت‌نام{% endblock %}

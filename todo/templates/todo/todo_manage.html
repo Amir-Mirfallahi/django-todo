@@ -1,0 +1,203 @@
+{% extends "layout.html" %} {% block content%}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex gap-4 justify-center">
+    <h1 class="text-4xl font-bold text-center text-white mb-8">لیست کارها</h1>
+    <a href="{% url 'todo:create_task' %}">
+      <svg
+        width="46"
+        height="46"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 2.25c-5.376 0-9.75 4.374-9.75 9.75s4.374 9.75 9.75 9.75 9.75-4.374 9.75-9.75S17.376 2.25 12 2.25Zm3.75 10.5h-3v3a.75.75 0 1 1-1.5 0v-3h-3a.75.75 0 1 1 0-1.5h3v-3a.75.75 0 1 1 1.5 0v3h3a.75.75 0 1 1 0 1.5Z"
+        ></path>
+      </svg>
+    </a>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for task in tasks %}
+    <div
+      class="bg-blue-900/30 p-6 rounded-lg shadow-lg border border-blue-700/30 transition-all duration-300 hover:scale-105"
+    >
+      <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-white mb-4">{{ task.title }}</h2>
+        <div class="flex gap-2">
+          {% if task.status == True %}
+          <span class="text-green-500">انجام شده</span>
+          {% else %}
+          <span class="text-red-500">انجام نشده</span>
+          {% endif %}
+          <div class="relative inline-block text-left">
+            <button
+              type="button"
+              onclick="toggleDropdown('{{ task.id }}')"
+              class="text-white hover:text-blue-300"
+            >
+              <svg
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M3 18h18v-2H3v2Zm0-5h18v-2H3v2Zm0-7v2h18V6H3Z"></path>
+              </svg>
+            </button>
+            <div
+              id="dropdown-{{ task.id }}"
+              class="hidden absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-blue-800 ring-1 ring-black ring-opacity-5 z-100"
+            >
+              <div class="py-1" role="menu" aria-orientation="vertical">
+                <a
+                  href="{% url 'todo:update_task' task.id %}"
+                  class="block px-4 py-2 text-sm text-white hover:bg-blue-700"
+                  role="menuitem"
+                  >ویرایش</a
+                >
+                <a
+                  href="{% url 'todo:complete_task' task.id %}"
+                  class="block w-full text-left px-4 py-2 text-sm text-white hover:bg-blue-700"
+                  role="menuitem"
+                >
+                  {% if task.status %} تغییر به انجام نشده {% else %} تغییر به
+                  انجام شده {% endif %}
+                </a>
+                <a
+                  href="{% url 'todo:delete_task' task.id %}"
+                  class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-blue-700"
+                  role="menuitem"
+                >
+                  حذف
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="task-details-{{ task.id }}" class="hidden">
+        <p class="text-gray-400">توضیحات: {{ task.description }}</p>
+        <p class="text-gray-400">
+          تاریخ ایجاد: {{ task.created_at|date:"Y/m/d" }}
+        </p>
+        <p class="text-gray-400">
+          آخرین بروزرسانی: {{ task.updated_at|date:"Y/m/d" }}
+        </p>
+        <p class="text-gray-400">اولویت: {{ task.get_priority_display }}</p>
+      </div>
+      <button
+        class="text-blue-500 hover:text-blue-400 transition-colors"
+        onclick="toggleDetails('{{ task.id }}')"
+      >
+        جزئیات
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination controls moved outside the task loop -->
+  {% if is_paginated %}
+  <div class="flex justify-center mt-8">
+    <ul class="flex justify-center gap-2">
+      {% if page_obj.has_previous %}
+      <li class="pagination-item">
+        <a
+          href="?page={{ page_obj.previous_page_number }}"
+          class="pagination-link bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded text-white"
+        >
+          قبلی
+        </a>
+      </li>
+      {% endif %} {% for page in paginator.page_range %}
+      <li class="pagination-item">
+        <a
+          href="?page={{ page }}"
+          class="pagination-link {% if page == tasks.number %}bg-blue-500{% else %}bg-blue-700 hover:bg-blue-600{% endif %} px-4 py-2 rounded text-white"
+        >
+          {{ page }}
+        </a>
+      </li>
+      {% endfor %} {% if page_obj.has_next %}
+      <li class="pagination-item">
+        <a
+          href="?page={{ page_obj.next_page_number }}"
+          class="pagination-link bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded text-white"
+        >
+          بعدی
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endblock %} {% block title %} لیست کارها {% endblock %} {% block scripts %}
+<script>
+  function toggleDetails(taskId) {
+    const details = document.getElementById(`task-details-${taskId}`);
+    details.classList.toggle("hidden");
+  }
+  function toggleDropdown(taskId) {
+    const dropdown = document.getElementById(`dropdown-${taskId}`);
+    dropdown.classList.toggle("hidden");
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener("click", function (event) {
+    const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+    dropdowns.forEach((dropdown) => {
+      const button = document.querySelector(
+        `[onclick="toggleDropdown('${dropdown.id.replace("dropdown-", "")}')"]`
+      );
+      if (
+        button &&
+        !button.contains(event.target) &&
+        !dropdown.contains(event.target)
+      ) {
+        dropdown.classList.add("hidden");
+      }
+    });
+  });
+
+  function deleteTask(taskId) {
+    if (confirm("آیا از حذف این کار اطمینان دارید؟")) {
+      // Send request to delete the task
+      fetch(`/update/${taskId}/`, {
+        method: "DELETE",
+        headers: {
+          "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+            .value,
+        },
+      }).then((response) => {
+        if (response.ok) {
+          // Reload the page or remove the task element
+          location.reload();
+        } else {
+          alert("خطا در حذف کار");
+        }
+      });
+    }
+  }
+
+  function changeStatus(taskId) {
+    // Send request to toggle task status
+    fetch(`/update/${taskId}/`, {
+      method: "PATCH",
+      headers: {
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+          .value,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ toggle_status: true }),
+    }).then((response) => {
+      if (response.ok) {
+        // Reload the page to show updated status
+        location.reload();
+      } else {
+        alert("خطا در تغییر وضعیت کار");
+      }
+    });
+  }
+</script>
+{% endblock %}

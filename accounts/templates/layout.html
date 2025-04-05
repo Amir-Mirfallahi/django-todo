@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %} | لحظه ساز</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap"
+    />
+    <style>
+      * {
+        font-family: "Vazirmatn", sans-serif;
+      }
+      body {
+        background-color: #0a192f;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-gray-100">
+    {% block content %} {% endblock %}
+  </body>
+  {% block scripts %} {% endblock %}
+</html>

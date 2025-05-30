@@ -1,3 +1,4 @@
 django>5
 Pillow
 djangorestframework
+drf-yasg[validation]

@@ -9,7 +9,7 @@ from accounts.models import Profile
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import CustomAuthTokenSerializer, CustomTokenObtainPairSerializer, ChangePasswordSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
@@ -170,6 +170,7 @@ class ActivationResendApiView(GenericAPIView):
 
 class ResetPasswordApiView(GenericAPIView):
     serializer_class = ResetPasswordSerializer
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -188,6 +189,7 @@ class ResetPasswordApiView(GenericAPIView):
 
 class ResetPasswordConfirmApiView(GenericAPIView):
     serializer_class = ResetPasswordConfirmSerializer
+    permission_classes = [AllowAny]
     def post(self, request, token, *args, **kwargs):
         try:
             token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])

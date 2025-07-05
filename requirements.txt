@@ -1,4 +1,10 @@
-django>5
+Django>=5.2,<=5.3
 Pillow
 djangorestframework
 drf-yasg[validation]
+coreapi
+python-decouple==3.8
+
+# Third parties
+django-mail-templated
+djangorestframework-simplejwt

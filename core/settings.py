@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-dw@zq=mxz=czf1+ie!x7=*atlhbnk$144!d^+s+e4=i_g)=d(*'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=lambda x: [s.strip() for s in x.split(",")])
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accounts',
     'todo',
     'rest_framework',
+    'mail_templated',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +146,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = False  # True for TLS, False for SSL
+EMAIL_HOST = 'smtp4dev'  # SMTP server host
+EMAIL_HOST_USER = ''  # SMTP server username
+EMAIL_HOST_PASSWORD = ''  # SMTP server password
+EMAIL_PORT = 25  # SMTP server port (587 for TLS, 465 for SSL)

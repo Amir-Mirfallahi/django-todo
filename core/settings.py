@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "mail_templated",
+    "django_celery_beat"
 ]
 
 MIDDLEWARE = [
@@ -168,3 +169,6 @@ EMAIL_PORT = 25  # SMTP server port (587 for TLS, 465 for SSL)
 
 # Swagger configuration
 SWAGGER_USE_COMPAT_RENDERERS = False
+
+# Celery Configuration
+CELERY_BROKER_URL = "redis://redis:6379/1"

@@ -45,3 +45,6 @@ celery
 django-celery-beat
 redis
 django-redis
+
+# Deployment modules
+gunicorn

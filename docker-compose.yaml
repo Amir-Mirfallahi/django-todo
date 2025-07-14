@@ -9,6 +9,9 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
   redis:
     container_name: redis
     image: redis
@@ -25,6 +28,9 @@ services:
     depends_on:
       - redis
       - backend
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
   beat:
     build: .
     command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
@@ -33,6 +39,9 @@ services:
     depends_on:
       - redis
       - backend
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   smtp4dev:
     image: rnwood/smtp4dev:v3

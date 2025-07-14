@@ -1,9 +1,11 @@
+import requests
 from django.views.generic import FormView, ListView, UpdateView, RedirectView
 from .forms import TaskForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Task
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
+from decouple import config
 
 
 class TodoManageView(LoginRequiredMixin, ListView):
@@ -20,7 +22,11 @@ class TodoManageView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(context)
+        api_key = config("OPENWEATHER_API_KEY")
+        url = f"https://api.openweathermap.org/data/2.5/weather?lat=35.7219&lon=51.3347&lang=fa&appid={api_key}"
+        response = requests.get(url)
+        context['weather_main'] = response.json().get('weather')[0].get('main')
+        context["weather_description"] = response.json().get('weather')[0].get('description')
         return context
 
 

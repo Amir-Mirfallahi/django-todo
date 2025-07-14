@@ -172,3 +172,14 @@ SWAGGER_USE_COMPAT_RENDERERS = False
 
 # Celery Configuration
 CELERY_BROKER_URL = "redis://redis:6379/1"
+
+# Cache
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

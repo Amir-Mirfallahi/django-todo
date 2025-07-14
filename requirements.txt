@@ -44,3 +44,4 @@ urllib3==2.5.0
 celery
 django-celery-beat
 redis
+django-redis

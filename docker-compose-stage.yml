@@ -1,4 +1,15 @@
 services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: stage_user
+      POSTGRES_PASSWORD: C8(dn(lk)6^@
+      POSTGRES_DB: django_todo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   backend:
     build: .
     container_name: backend
@@ -10,6 +21,8 @@ services:
        exec gunicorn core.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - ./:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
     ports:
       - "8000:8000"
     env_file:
@@ -40,6 +53,13 @@ services:
     dns:
       - 8.8.8.8
       - 8.8.4.4
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "pgrep", "-f", "celery" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   beat:
     build: .
     command: celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
@@ -51,7 +71,26 @@ services:
     dns:
       - 8.8.8.8
       - 8.8.4.4
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "pgrep", "-f", "celery" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/home/app/static
+      - media_volume:/home/app/media
 
 volumes:
-  smtp4dev-data:
+  static_volume:
+  media_volume:
+  postgres_data:
 

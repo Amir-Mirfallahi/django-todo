@@ -48,3 +48,6 @@ django-redis
 
 # Deployment modules
 gunicorn
+
+# Database
+psycopg2-binary
